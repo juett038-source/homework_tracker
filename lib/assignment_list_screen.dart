@@ -10,6 +10,7 @@ class AssignmentListScreen extends StatefulWidget {
 class _AssignmentListScreenState extends State<AssignmentListScreen> {
 
   final List<Map<String, dynamic>> _assignments = [];
+  final Set<Map<String, dynamic>> _selectedAssignments = {};
   void _showAddAssignmentDialog() {
     String newAssignmentTitle = '';
 
@@ -54,11 +55,26 @@ class _AssignmentListScreenState extends State<AssignmentListScreen> {
       _assignments[index]['completed'] = value ?? false;
     });
   }
+  void _deleteSelectedAssignments() {
+    setState(() {
+      _assignments.removeWhere((assignment) => _selectedAssignments.contains(assignment),
+    );
+    _selectedAssignments.clear();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Assignments')),
+      appBar: AppBar(title: const Text('Assignments'),
+      actions: <Widget>[
+        IconButton(
+          icon: const Icon(Icons.delete),
+          tooltip: 'Delete Selected',
+          onPressed: _selectedAssignments.isEmpty ? null : _deleteSelectedAssignments,
+        ),
+      ]
+      ),
       body: ListView.builder(
         itemCount: _assignments.length,
         itemBuilder: (context, index) {
@@ -66,6 +82,20 @@ class _AssignmentListScreenState extends State<AssignmentListScreen> {
             title: Text(_assignments[index]['title']),
             value: _assignments[index]['completed'],
             onChanged: (value) => _toggleCompleted(index, value),
+
+            secondary: Checkbox(
+              value: _selectedAssignments.contains(_assignments[index]),
+              onChanged: (value) {
+                setState(() {
+                  if(value == true) {
+                    _selectedAssignments.add(_assignments[index]);
+
+                  }else {
+                    _selectedAssignments.remove(_assignments[index]);
+                  }
+                });
+              },
+            ),
           );
         },
       ),
