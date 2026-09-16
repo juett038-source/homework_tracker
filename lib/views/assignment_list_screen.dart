@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../presenters/assignment_presenter.dart';
 
 class AssignmentListScreen extends StatefulWidget {
   const AssignmentListScreen({super.key});
@@ -9,7 +10,7 @@ class AssignmentListScreen extends StatefulWidget {
 
 class _AssignmentListScreenState extends State<AssignmentListScreen> {
 
-  final List<Map<String, dynamic>> _assignments = [];
+  final AssignmentPresenter _presenter = AssignmentPresenter();
   final Set<Map<String, dynamic>> _selectedAssignments = {};
   void _showAddAssignmentDialog() {
     String newAssignmentTitle = '';
@@ -35,10 +36,7 @@ class _AssignmentListScreenState extends State<AssignmentListScreen> {
               onPressed: () {
                 if (newAssignmentTitle.trim().isNotEmpty) {
                   setState(() {
-                    _assignments.add({
-                      'title': newAssignmentTitle.trim(),
-                      'completed': false,
-                    });
+                    _presenter.addAssignment(newAssignmentTitle.trim());
                   });
                 }
                 Navigator.pop(context);
@@ -50,52 +48,26 @@ class _AssignmentListScreenState extends State<AssignmentListScreen> {
       },
     );
   }
-  void _toggleCompleted(int index, bool? value) {
-    setState(() {
-      _assignments[index]['completed'] = value ?? false;
-    });
-  }
-  void _deleteSelectedAssignments() {
-    setState(() {
-      _assignments.removeWhere((assignment) => _selectedAssignments.contains(assignment),
-    );
-    _selectedAssignments.clear();
-    });
-  }
+  
 
   @override
   Widget build(BuildContext context) {
+    final assignments = _presenter.assignments;
+    
     return Scaffold(
-      appBar: AppBar(title: const Text('Assignments'),
-      actions: <Widget>[
-        IconButton(
-          icon: const Icon(Icons.delete),
-          tooltip: 'Delete Selected',
-          onPressed: _selectedAssignments.isEmpty ? null : _deleteSelectedAssignments,
-        ),
-      ]
-      ),
+      appBar: AppBar(title: const Text('Assignments')),
       body: ListView.builder(
-        itemCount: _assignments.length,
+        itemCount: assignments.length,
         itemBuilder: (context, index) {
+          final assignment = assignments[index];
           return CheckboxListTile(
-            title: Text(_assignments[index]['title']),
-            value: _assignments[index]['completed'],
-            onChanged: (value) => _toggleCompleted(index, value),
-
-            secondary: Checkbox(
-              value: _selectedAssignments.contains(_assignments[index]),
-              onChanged: (value) {
-                setState(() {
-                  if(value == true) {
-                    _selectedAssignments.add(_assignments[index]);
-
-                  }else {
-                    _selectedAssignments.remove(_assignments[index]);
-                  }
-                });
-              },
-            ),
+            title: Text(assignment.title),
+            value: assignment.isCompleted,
+            onChanged: (value) {
+              setState(() {
+                _presenter.toggleCompleted(index);
+              });
+            },
           );
         },
       ),

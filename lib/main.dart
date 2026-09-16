@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'main_navigation.dart';
+import 'views/main_navigation.dart';
 import 'home_screen.dart';
 
 
