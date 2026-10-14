@@ -27,14 +27,21 @@ class _AssignmentListScreenState extends State<AssignmentListScreen> {
   }
 
   Future<void> _loadData() async {
+    try {
   await _coursePresenter.loadCourses();
   await _assignmentpresenter.loadAssignments();
+  } catch (e, stackTrace) {
+    debugPrint('Error Loading Data.');
+    debugPrintStack(stackTrace: stackTrace);
+
+  } finally {
   if (!mounted) return;
   
   setState(() { 
     _isLoading = false;
     _courseNames = _coursePresenter.courses.map((c) => c.name).toList(); 
     });
+  }
 }
 
   final Set<Map<String, dynamic>> _selectedAssignments = {};

@@ -40,4 +40,10 @@ class AssignmentPresenter {
     await Assignment.updateCompletionStatus(index, _assignments);
     assignment.isCompleted = !assignment.isCompleted;
   }
+
+  int get totalAssignments => _assignments.length;
+
+  int get completedAssignments => _assignments.where((a) => a.isCompleted).length;
+
+  double get completionRatio => totalAssignments == 0 ? 0 : completedAssignments / totalAssignments;
 }

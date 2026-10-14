@@ -5,7 +5,7 @@ import 'home_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'views/login_screen.dart';
-
+import 'themes/app_theme.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,7 +20,7 @@ class HomeworkTrackerApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Homework Tracker',
-      theme: ThemeData(primarySwatch: Colors.blue), 
+      theme: AppTheme().darkTheme, 
       home: const SplashScreen(),
     );
   }
@@ -47,6 +47,13 @@ class HomeworkTrackerApp extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+              ),
+            );
+          }
+          if (snapshot.hasError) {
+            return Scaffold(
+              body: Center(
+                child: Text('Unable to authenticate.'),
               ),
             );
           }
